@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Fireguard Dashboard</title>
+  <style>
+    body {
+      font-family: monospace;
+      background-color: #111;
+      color: #eee;
+      padding: 2rem;
+    }
+    .host {
+      border: 1px solid #444;
+      padding: 1rem;
+      margin: 0.5rem;
+      background-color: #1a1a1a;
+      display: inline-block;
+      vertical-align: top;
+      min-width: 150px;
+    }
+    .hostname {
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+      color: #90ee90;
+    }
+    .service-row {
+      margin-top: 0.5rem;
+    }
+    .service-label {
+      display: inline-block;
+      width: 80px;
+    }
+    .status-dot {
+      display: inline-block;
+      width: 1rem;
+      height: 1rem;
+      border-radius: 50%;
+      margin-left: 0.5rem;
+    }
+    .ok { background-color: #4caf50; }
+    .warn { background-color: #ffc107; }
+    .fail { background-color: #f44336; }
+  </style>
+</head>
+<body>
+  <h1>🔥 Fireguard Dashboard</h1>
+
+  {% for hostname, host in status_data.items() %}
+    <div class="host">
+      <div class="hostname">{{ hostname }}</div>
+      {% for service, state in host["services"].items() %}
+        <div class="service-row">
+          <span class="service-label">{{ service }}</span>
+          <span class="status-dot {{ state|lower }}"></span>
+        </div>
+      {% endfor %}
+    </div>
+  {% endfor %}
+</body>
+</html>

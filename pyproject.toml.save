@@ -1,0 +1,16 @@
+[project]
+name = "fireguardctl"
+version = "0.0.1"
+description = "Tactical CLI for Fireguard Infrastructure Status Reports"
+authors = [{ name = "Shawn Andrews", email = "shawn@notcreative.cloud" }]
+readme = ""
+license = { text = "MIT" }
+requires-python = ">=3.9"
+dependencies = ["requests"]
+
+[project.scripts]
+fireguardctl = fireguardctl.cli:main"
+
+[build-system]
+requieres = ["setuptools>=61.0"]
+build-backend = "setupstools.build_meta"
