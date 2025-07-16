@@ -54,6 +54,8 @@ async def show_dashboard(request: Request):
 
 @router.post("/api/status")
 async def update_status(payload: StatusPayload):
+    print("Incoming Payload:", payload)
+
     status_data[payload.hostname] = {
         "location": payload.location,
         "services": payload.services,
