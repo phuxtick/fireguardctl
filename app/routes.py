@@ -27,20 +27,20 @@ async def show_dashboard(request: Request):
         if isinstance(timestamp, str):
             timestamp = datetime.fromisoformat(timestamp)
 
-    delta = now - timestamp
-    is_stale = delta > timedelta(minutes=STALE_THRESHOLD_MINUTES)
+        delta = now - timestamp
+        is_stale = delta > timedelta(minutes=STALE_THRESHOLD_MINUTES)
 
-    host_display_data[hostname] = {
-        "location": data["location"],
-        "services": data["services"],
-        "timestamp": timestamp,
-        "is_stale": is_stale
-    }
+        host_display_data[hostname] = {
+            "location": data["location"],
+            "services": data["services"],
+            "timestamp": timestamp,
+            "is_stale": is_stale
+        }
 
     return templates.TemplateResponse("dashboard.html", {
         "request": request,
         "status_data": host_display_data
-})
+    })
 
 
 
