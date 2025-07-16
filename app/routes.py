@@ -1,29 +1,48 @@
 from fastapi import APIRouter, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
+from datetime import datetime, timedelta
+
 import os
+
+from app.models import StatusPayload
+
+# In-memory storage
+status_data = {}
 
 router = APIRouter()
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 templates = Jinja2Templates(directory=os.path.join(BASE_DIR, "templates"))
 
+STALE_THRESHOLD_MINUTES = 5
+
 @router.get("/dashboard", response_class=HTMLResponse)
 async def show_dashboard(request: Request):
-    from app.routes import status_data
-    print("STATUS DATA:", status_data)  # 👈 add this
-    return templates.TemplateResponse(
-        "dashboard.html",
-        {
-            "request": request,
-            "status_data": status_data
-        }
-    )
+    host_display_data = {}
+    now = datetime.utcnow()
 
-from app.models import StatusPayload
+    for hostname, data in status_data.items():
+        timestamp = data["timestamp"]
+        if isinstance(timestamp, str):
+            timestamp = datetime.fromisoformat(timestamp)
 
-# In-memory storage
-status_data = {}
+    delta = now - timestamp
+    is_stale = delta > timedelta(minutes=STALE_THRESHOLD_MINUTES)
+
+    host_display_data[hostname] = {
+        "location": data["location"],
+        "services": data["services"],
+        "timestamp": timestamp,
+        "is_stale": is_stale
+    }
+
+    return templates.TemplateResponse("dashboard.html", {
+        "request": request,
+        "status_data": host_display_data
+})
+
+
 
 @router.post("/api/status")
 async def update_status(payload: StatusPayload):
