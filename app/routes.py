@@ -55,6 +55,12 @@ from datetime import timezone
 
 @router.post("/api/status")
 async def update_status(payload: StatusPayload):
+    from datetime import timezone
+
+    timestamp = payload.timestamp
+    if timestamp.tzinfo is None:
+        timestamp = timestamp.replace(tzinfo=timezone.utc)
+
     with get_session() as session:
         existing = session.exec(
             select(HostStatus).where(HostStatus.hostname == payload.hostname)
