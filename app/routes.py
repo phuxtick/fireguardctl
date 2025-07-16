@@ -1,25 +1,26 @@
+# --- Imports ---
+import os
+import json
+from datetime import datetime, timedelta, timezone
+
 from fastapi import APIRouter, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
-from datetime import datetime, timedelta, timezone
 
-import os
+from sqlmodel import select
+from app.models import HostStatus, StatusPayload
+from app.database import get_session
 
-from app.models import StatusPayload
+# --- Constants ---
+STALE_THRESHOLD_MINUTES = 5
 
-# In-memory storage
-status_data = {}
-
+# --- Router Setup ---
 router = APIRouter()
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 templates = Jinja2Templates(directory=os.path.join(BASE_DIR, "templates"))
 
-from sqlmodel import select
-from app.models import HostStatus
-from app.database import get_session
-
-STALE_THRESHOLD_MINUTES = 5
+# --- Routes ---
 
 @router.get("/dashboard", response_class=HTMLResponse)
 async def show_dashboard(request: Request):
@@ -46,17 +47,9 @@ async def show_dashboard(request: Request):
         "status_data": host_display_data
     })
 
-from sqlmodel import Session
-from app.models import HostStatus
-from app.database import get_session
-import json
-
-from datetime import timezone
 
 @router.post("/api/status")
 async def update_status(payload: StatusPayload):
-    from datetime import timezone
-
     timestamp = payload.timestamp
     if timestamp.tzinfo is None:
         timestamp = timestamp.replace(tzinfo=timezone.utc)
@@ -68,10 +61,6 @@ async def update_status(payload: StatusPayload):
 
         if existing:
             session.delete(existing)
-
-        timestamp = payload.timestamp
-        if timestamp.tzinfo is None:
-            timestamp = timestamp.replace(tzinfo=timezone.utc)
 
         host = HostStatus(
             hostname=payload.hostname,
