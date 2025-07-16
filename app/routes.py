@@ -32,6 +32,9 @@ async def show_dashboard(request: Request):
 
         for host in hosts:
             timestamp = host.timestamp
+            if timestamp.tzinfo is None:
+                timestamp = timestamp.replace(tzinfo=timezone.utc)
+
             delta = now - timestamp
             is_stale = delta > timedelta(minutes=STALE_THRESHOLD_MINUTES)
 
