@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 import os
 
@@ -20,12 +20,20 @@ STALE_THRESHOLD_MINUTES = 5
 @router.get("/dashboard", response_class=HTMLResponse)
 async def show_dashboard(request: Request):
     host_display_data = {}
-    now = datetime.utcnow()
+    now = datetime.now(timezone.utc)
 
     for hostname, data in status_data.items():
-        timestamp = data["timestamp"]
+        timestamp = data.get("timestamp")
+        if not timestamp:
+            print(f"Skipping {hostname} — no timestamp found.")
+            continue
+
         if isinstance(timestamp, str):
-            timestamp = datetime.fromisoformat(timestamp)
+            try:
+                timestamp = datetime.fromisoformat(timestamp)
+            except Exception as e:
+                print(f"Error parsing timestamp for {hostname}: {e}")
+                continue
 
         delta = now - timestamp
         is_stale = delta > timedelta(minutes=STALE_THRESHOLD_MINUTES)
