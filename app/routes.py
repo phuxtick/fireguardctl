@@ -54,11 +54,13 @@ async def show_dashboard(request: Request):
 
 @router.post("/api/status")
 async def update_status(payload: StatusPayload):
-    print("Incoming Payload:", payload)
+    timestamp = payload.timestamp
+    if timestamp.tzinfo is None:
+        timestamp = timestamp.replace(tzinfo=timezone.utc)
 
     status_data[payload.hostname] = {
         "location": payload.location,
         "services": payload.services,
-        "timesampt": payload.timestamp
+        "timestamp": timestamp
     }
     return {"message": "Status updated."}
