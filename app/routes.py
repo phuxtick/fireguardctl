@@ -45,6 +45,7 @@ async def show_dashboard(request: Request):
                 "is_stale": is_stale
             }
 
+
     return templates.TemplateResponse("dashboard.html", {
         "request": request,
         "status_data": host_display_data
