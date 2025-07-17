@@ -15,3 +15,7 @@ app.include_router(status_router)
 
 # Optional: mount static files (CSS/images)
 app.mount("/static", StaticFiles(directory="static"), name="static")
+
+from app.database import init_db
+
+init_db()

@@ -40,13 +40,16 @@
     .ok { background-color: #4caf50; }
     .warn { background-color: #ffc107; }
     .fail { background-color: #f44336; }
+    .stale {
+      opacity: 0.3;
+    }
   </style>
 </head>
 <body>
   <h1>🔥 Fireguard Dashboard</h1>
 
   {% for hostname, host in status_data.items() %}
-    <div class="host">
+    <div class="host {% if host.is_stale %}stale{% endif %}">
       <div class="hostname">{{ hostname }}</div>
       {% for service, state in host["services"].items() %}
         <div class="service-row">
