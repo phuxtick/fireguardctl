@@ -16,7 +16,7 @@
       background-color: #1a1a1a;
       display: inline-block;
       vertical-align: top;
-      min-width: 150px;
+      min-width: 180px;
     }
     .hostname {
       font-weight: bold;
@@ -29,6 +29,12 @@
     .service-label {
       display: inline-block;
       width: 80px;
+    }
+    .info-label {
+      display: block;
+      margin-top: 0.3rem;
+      font-size: 0.9rem;
+      color: #ccc;
     }
     .status-dot {
       display: inline-block;
@@ -51,6 +57,21 @@
   {% for hostname, host in status_data.items() %}
     <div class="host {% if host.is_stale %}stale{% endif %}">
       <div class="hostname">{{ hostname }}</div>
+
+      {# System Info #}
+      {% if host.get("system_info") %}
+        <div class="info-label">OS: {{ host.system_info.OS }}</div>
+        <div class="info-label">Kernel: {{ host.system_info.Kernel }}</div>
+      {% endif %}
+
+      {# Interfaces #}
+      {% if host.get("interfaces") %}
+        {% for iface, ip in host.interfaces.items() %}
+          <div class="info-label">{{ iface }}: {{ ip }}</div>
+        {% endfor %}
+      {% endif %}
+
+      {# Services #}
       {% for service, state in host["services"].items() %}
         <div class="service-row">
           <span class="service-label">{{ service }}</span>
