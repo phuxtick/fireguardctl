@@ -56,6 +56,8 @@
   {% for hostname, host in status_data.items() %}
     <div class="host {% if host.is_stale %}stale{% endif %}">
       <div class="hostname">{{ hostname }}</div>
+      <div style="font-size: 0.8rem; color: #aaa;">Last seen: {{ host.last_seen }}</div>
+
 
       {% for service, state in host["services"].items() %}
         <div class="service-row">

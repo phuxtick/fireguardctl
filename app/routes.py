@@ -38,14 +38,23 @@ async def show_dashboard(request: Request):
             delta = now - timestamp
             is_stale = delta > timedelta(minutes=STALE_THRESHOLD_MINUTES)
 
+            if delta < timedelta(seconds=60):
+                last_seen_str = "just now"
+            elif delta < timedelta(minutes=2):
+                last_seen_str = "1 minute ago"
+            else:
+                last_seen_str = f"{int(delta.total_seconds() // 60)} minutes ago"
+
+
     host_display_data[host.hostname] = {
         "location": host.location,
         "services": json.loads(host.services),
         "interfaces": json.loads(host.interfaces) if host.interfaces else {},
         "system_info": json.loads(host.system_info) if host.system_info else {},
         "timestamp": timestamp,
-        "is_stale": is_stale
-    }
+        "is_stale": is_stale,
+        "last_seen": last_seen_str,
+
 
 
 
