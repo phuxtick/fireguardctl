@@ -73,9 +73,12 @@ async def update_status(payload: StatusPayload):
             hostname=payload.hostname,
             location=payload.location,
             services=json.dumps(payload.services),
+            interfaces=json.dumps(payload.interfaces),
+            system_info=json.dumps(payload.system_info),
             timestamp=timestamp
         )
         session.add(host)
         session.commit()
 
     return {"message": "Status updated."}
+

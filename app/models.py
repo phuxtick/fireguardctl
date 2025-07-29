@@ -13,10 +13,9 @@ from typing import Optional, Dict
 from datetime import datetime
 
 class HostStatus(SQLModel, table=True):
-    id: Optional[int] = Field(default=None, primary_key=True)
-    hostname: str
+    hostname: str = Field(primary_key=True)
     location: str
-    services: str  # JSON string of metrics
-    interfaces: Optional[str] = None  # <- ADD THIS
-    system_info: Optional[str] = None  # <- AND THIS
+    services: str  # stored as JSON string
+    interfaces: Optional[str] = None  # JSON string of dict
+    system_info: Optional[str] = None  # JSON string of dict
     timestamp: datetime
