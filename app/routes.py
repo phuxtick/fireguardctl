@@ -38,21 +38,25 @@ async def show_dashboard(request: Request):
             delta = now - timestamp
             is_stale = delta > timedelta(minutes=STALE_THRESHOLD_MINUTES)
 
-            # Start building the payload
-            display = {
-                "location": host.location,
-                "services": json.loads(host.services),
-                "timestamp": timestamp,
-                "is_stale": is_stale
-            }
+            if delta < timedelta(seconds=60):
+                last_seen_str = "just now"
+            elif delta < timedelta(minutes=2):
+                last_seen_str = "1 minute ago"
+            else:
+                last_seen_str = f"{int(delta.total_seconds() // 60)} minutes ago"
 
-            # Optional fields (backward compatible)
-            if host.interfaces:
-                display["interfaces"] = json.loads(host.interfaces)
-            if host.system_info:
-                display["system_info"] = json.loads(host.system_info)
 
-            host_display_data[host.hostname] = display
+    host_display_data[host.hostname] = {
+        "location": host.location,
+        "services": json.loads(host.services),
+        "interfaces": json.loads(host.interfaces) if host.interfaces else {},
+        "system_info": json.loads(host.system_info) if host.system_info else {},
+        "timestamp": timestamp,
+        "is_stale": is_stale,
+        "last_seen": last_seen_str,
+    }
+
+
 
     return templates.TemplateResponse("dashboard.html", {
         "request": request,
@@ -78,8 +82,8 @@ async def update_status(payload: StatusPayload):
             hostname=payload.hostname,
             location=payload.location,
             services=json.dumps(payload.services),
-            interfaces=json.dumps(payload.interfaces) if payload.interfaces else None,
-            system_info=json.dumps(payload.system_info) if payload.system_info else None,
+            interfaces=json.dumps(payload.interfaces),
+            system_info=json.dumps(payload.system_info),
             timestamp=timestamp
         )
         session.add(host)

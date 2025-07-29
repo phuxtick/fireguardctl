@@ -16,7 +16,7 @@
       background-color: #1a1a1a;
       display: inline-block;
       vertical-align: top;
-      min-width: 180px;
+      min-width: 200px;
     }
     .hostname {
       font-weight: bold;
@@ -29,12 +29,6 @@
     .service-label {
       display: inline-block;
       width: 80px;
-    }
-    .info-label {
-      display: block;
-      margin-top: 0.3rem;
-      font-size: 0.9rem;
-      color: #ccc;
     }
     .status-dot {
       display: inline-block;
@@ -49,6 +43,11 @@
     .stale {
       opacity: 0.3;
     }
+    .subsection-label {
+      font-weight: bold;
+      margin-top: 1rem;
+      color: #ccc;
+    }
   </style>
 </head>
 <body>
@@ -57,21 +56,9 @@
   {% for hostname, host in status_data.items() %}
     <div class="host {% if host.is_stale %}stale{% endif %}">
       <div class="hostname">{{ hostname }}</div>
+      <div style="font-size: 0.8rem; color: #aaa;">Last seen: {{ host.last_seen }}</div>
 
-      {# System Info #}
-      {% if host.get("system_info") %}
-        <div class="info-label">OS: {{ host.system_info.OS }}</div>
-        <div class="info-label">Kernel: {{ host.system_info.Kernel }}</div>
-      {% endif %}
 
-      {# Interfaces #}
-      {% if host.get("interfaces") %}
-        {% for iface, ip in host.interfaces.items() %}
-          <div class="info-label">{{ iface }}: {{ ip }}</div>
-        {% endfor %}
-      {% endif %}
-
-      {# Services #}
       {% for service, state in host["services"].items() %}
         <div class="service-row">
           <span class="service-label">{{ service }}</span>
@@ -82,8 +69,30 @@
           {% endif %}
         </div>
       {% endfor %}
+
+      {% if host.interfaces %}
+        <div class="subsection-label">Interfaces</div>
+        {% for iface, ip in host.interfaces.items() %}
+          <div class="service-row">
+            <span class="service-label">{{ iface }}</span>
+            <span style="margin-left: 0.5rem;">{{ ip }}</span>
+          </div>
+        {% endfor %}
+      {% endif %}
+
+      {% if host.system_info %}
+        <div class="service-row">
+          <span class="service-label">OS</span>
+          <span>{{ host.system_info.get("OS", "unknown") }}</span>
+        </div>
+        <div class="service-row">
+          <span class="service-label">Kernel</span>
+          <span>{{ host.system_info.get("Kernel", "unknown") }}</span>
+        </div>
+      {% endif %}
+
+
     </div>
   {% endfor %}
-
 </body>
 </html>

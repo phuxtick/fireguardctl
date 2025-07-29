@@ -1,6 +1,6 @@
-from pydantic import BaseModel
 from typing import Dict, Optional
 from datetime import datetime
+from pydantic import BaseModel
 
 class StatusPayload(BaseModel):
     hostname: str
@@ -10,13 +10,15 @@ class StatusPayload(BaseModel):
     system_info: Optional[Dict[str, str]] = None
     timestamp: datetime
 
+
 from sqlmodel import SQLModel, Field
 from typing import Optional, Dict
 from datetime import datetime
 
 class HostStatus(SQLModel, table=True):
-    id: Optional[int] = Field(default=None, primary_key=True)
-    hostname: str
+    hostname: str = Field(primary_key=True)
     location: str
-    services: str  # We'll store this as a JSON string for now
+    services: str  # stored as JSON string
+    interfaces: Optional[str] = None  # JSON string of dict
+    system_info: Optional[str] = None  # JSON string of dict
     timestamp: datetime
