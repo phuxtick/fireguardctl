@@ -38,12 +38,15 @@ async def show_dashboard(request: Request):
             delta = now - timestamp
             is_stale = delta > timedelta(minutes=STALE_THRESHOLD_MINUTES)
 
-            host_display_data[host.hostname] = {
-                "location": host.location,
-                "services": json.loads(host.services),
-                "timestamp": timestamp,
-                "is_stale": is_stale
-            }
+    host_display_data[host.hostname] = {
+        "location": host.location,
+        "services": json.loads(host.services),
+        "interfaces": json.loads(host.interfaces) if host.interfaces else {},
+        "system_info": json.loads(host.system_info) if host.system_info else {},
+        "timestamp": timestamp,
+        "is_stale": is_stale
+    }
+
 
 
     return templates.TemplateResponse("dashboard.html", {
