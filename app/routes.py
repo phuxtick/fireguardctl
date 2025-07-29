@@ -90,4 +90,3 @@ async def update_status(payload: StatusPayload):
         session.commit()
 
     return {"message": "Status updated."}
-
