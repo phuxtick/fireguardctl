@@ -16,7 +16,7 @@
       background-color: #1a1a1a;
       display: inline-block;
       vertical-align: top;
-      min-width: 150px;
+      min-width: 200px;
     }
     .hostname {
       font-weight: bold;
@@ -43,6 +43,11 @@
     .stale {
       opacity: 0.3;
     }
+    .subsection-label {
+      font-weight: bold;
+      margin-top: 1rem;
+      color: #ccc;
+    }
   </style>
 </head>
 <body>
@@ -51,16 +56,39 @@
   {% for hostname, host in status_data.items() %}
     <div class="host {% if host.is_stale %}stale{% endif %}">
       <div class="hostname">{{ hostname }}</div>
-{% for service, state in host["services"].items() %}
-  <div class="service-row">
-    <span class="service-label">{{ service }}</span>
-    {% if state|lower in ['ok', 'warn', 'fail'] %}
-      <span class="status-dot {{ state|lower }}"></span>
-    {% else %}
-      <span style="margin-left: 0.5rem;">{{ state }}</span>
-    {% endif %}
-  </div>
-{% endfor %}
 
+      {% for service, state in host["services"].items() %}
+        <div class="service-row">
+          <span class="service-label">{{ service }}</span>
+          {% if state|lower in ['ok', 'warn', 'fail'] %}
+            <span class="status-dot {{ state|lower }}"></span>
+          {% else %}
+            <span style="margin-left: 0.5rem;">{{ state }}</span>
+          {% endif %}
+        </div>
+      {% endfor %}
+
+      {% if host.interfaces %}
+        <div class="subsection-label">Interfaces</div>
+        {% for iface, ip in host.interfaces.items() %}
+          <div class="service-row">
+            <span class="service-label">{{ iface }}</span>
+            <span style="margin-left: 0.5rem;">{{ ip }}</span>
+          </div>
+        {% endfor %}
+      {% endif %}
+
+      {% if host.system_info %}
+        <div class="subsection-label">System Info</div>
+        {% for key, val in host.system_info.items() %}
+          <div class="service-row">
+            <span class="service-label">{{ key }}</span>
+            <span style="margin-left: 0.5rem;">{{ val }}</span>
+          </div>
+        {% endfor %}
+      {% endif %}
+
+    </div>
+  {% endfor %}
 </body>
 </html>
