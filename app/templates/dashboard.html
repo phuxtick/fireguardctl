@@ -51,16 +51,18 @@
   {% for hostname, host in status_data.items() %}
     <div class="host {% if host.is_stale %}stale{% endif %}">
       <div class="hostname">{{ hostname }}</div>
-{% for service, state in host["services"].items() %}
-  <div class="service-row">
-    <span class="service-label">{{ service }}</span>
-    {% if state|lower in ['ok', 'warn', 'fail'] %}
-      <span class="status-dot {{ state|lower }}"></span>
-    {% else %}
-      <span style="margin-left: 0.5rem;">{{ state }}</span>
-    {% endif %}
-  </div>
-{% endfor %}
+      {% for service, state in host["services"].items() %}
+        <div class="service-row">
+          <span class="service-label">{{ service }}</span>
+          {% if state|lower in ['ok', 'warn', 'fail'] %}
+            <span class="status-dot {{ state|lower }}"></span>
+          {% else %}
+            <span style="margin-left: 0.5rem;">{{ state }}</span>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+  {% endfor %}
 
 </body>
 </html>
