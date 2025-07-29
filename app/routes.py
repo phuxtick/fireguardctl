@@ -38,13 +38,21 @@ async def show_dashboard(request: Request):
             delta = now - timestamp
             is_stale = delta > timedelta(minutes=STALE_THRESHOLD_MINUTES)
 
-            host_display_data[host.hostname] = {
+            # Start building the payload
+            display = {
                 "location": host.location,
                 "services": json.loads(host.services),
                 "timestamp": timestamp,
                 "is_stale": is_stale
             }
 
+            # Optional fields (backward compatible)
+            if host.interfaces:
+                display["interfaces"] = json.loads(host.interfaces)
+            if host.system_info:
+                display["system_info"] = json.loads(host.system_info)
+
+            host_display_data[host.hostname] = display
 
     return templates.TemplateResponse("dashboard.html", {
         "request": request,
@@ -70,6 +78,8 @@ async def update_status(payload: StatusPayload):
             hostname=payload.hostname,
             location=payload.location,
             services=json.dumps(payload.services),
+            interfaces=json.dumps(payload.interfaces) if payload.interfaces else None,
+            system_info=json.dumps(payload.system_info) if payload.system_info else None,
             timestamp=timestamp
         )
         session.add(host)

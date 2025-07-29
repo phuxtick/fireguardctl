@@ -1,11 +1,13 @@
 from pydantic import BaseModel
-from typing import Dict
+from typing import Dict, Optional
 from datetime import datetime
 
 class StatusPayload(BaseModel):
     hostname: str
     location: str
     services: Dict[str, str]
+    interfaces: Optional[Dict[str, str]] = None
+    system_info: Optional[Dict[str, str]] = None
     timestamp: datetime
 
 from sqlmodel import SQLModel, Field
