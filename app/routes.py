@@ -54,7 +54,7 @@ async def show_dashboard(request: Request):
         "timestamp": timestamp,
         "is_stale": is_stale,
         "last_seen": last_seen_str,
-
+    }
 
 
 
