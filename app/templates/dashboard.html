@@ -79,14 +79,16 @@
       {% endif %}
 
       {% if host.system_info %}
-        <div class="subsection-label">System Info</div>
-        {% for key, val in host.system_info.items() %}
-          <div class="service-row">
-            <span class="service-label">{{ key }}</span>
-            <span style="margin-left: 0.5rem;">{{ val }}</span>
-          </div>
-        {% endfor %}
+        <div class="service-row">
+          <span class="service-label">OS</span>
+          <span>{{ host.system_info.get("OS", "unknown") }}</span>
+        </div>
+        <div class="service-row">
+          <span class="service-label">Kernel</span>
+          <span>{{ host.system_info.get("Kernel", "unknown") }}</span>
+        </div>
       {% endif %}
+
 
     </div>
   {% endfor %}
