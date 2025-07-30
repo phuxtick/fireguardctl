@@ -51,6 +51,7 @@ async def show_dashboard(request: Request):
         "services": json.loads(host.services),
         "interfaces": json.loads(host.interfaces) if host.interfaces else {},
         "system_info": json.loads(host.system_info) if host.system_info else {},
+        "endpoints": json.loads(host.endpoints) if host.endpoints else {},
         "timestamp": timestamp,
         "is_stale": is_stale,
         "last_seen": last_seen_str,
@@ -84,6 +85,7 @@ async def update_status(payload: StatusPayload):
             services=json.dumps(payload.services),
             interfaces=json.dumps(payload.interfaces),
             system_info=json.dumps(payload.system_info),
+            endpoints=json.dumps(payload.endpoints),
             timestamp=timestamp
         )
         session.add(host)

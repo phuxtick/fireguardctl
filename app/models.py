@@ -8,6 +8,7 @@ class StatusPayload(BaseModel):
     services: Dict[str, str]
     interfaces: Optional[Dict[str, str]] = None
     system_info: Optional[Dict[str, str]] = None
+    endpoints: Dict[str, str] = {}
     timestamp: datetime
 
 
@@ -18,7 +19,8 @@ from datetime import datetime
 class HostStatus(SQLModel, table=True):
     hostname: str = Field(primary_key=True)
     location: str
-    services: str  # stored as JSON string
-    interfaces: Optional[str] = None  # JSON string of dict
-    system_info: Optional[str] = None  # JSON string of dict
+    services: str
+    interfaces: Optional[str] = None
+    system_info: Optional[str] = None
+    endpoints: Optional[str] = None
     timestamp: datetime

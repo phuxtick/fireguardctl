@@ -90,6 +90,16 @@
           <span>{{ host.system_info.get("Kernel", "unknown") }}</span>
         </div>
       {% endif %}
+      
+      {% if host["endpoints"] %}
+        <div class="service-row"><strong>Endpoints</strong></div>
+        {% for endpoint, status in host["endpoints"].items() %}
+          <div class="service-row">
+            <span class="service-label">{{ endpoint }}</span>
+            <span class="status-dot {% if status == 'ok' %}ok{% else %}fail{% endif %}"></span>
+          </div>
+        {% endfor %}
+      {% endif %}
 
 
     </div>
